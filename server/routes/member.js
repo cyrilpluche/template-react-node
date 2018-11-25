@@ -7,4 +7,8 @@ router.get('/find_all', member.findAll);
 
 router.post('/create', member.create);
 
+router.put('/update', member.update);
+
+router.post('/delete', member.delete);
+
 module.exports = router;

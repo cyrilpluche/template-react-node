@@ -13,11 +13,27 @@ export function Admin (state = initialState, action) {
         case labels.LOAD:
             return { ...state, isLoading: state.isLoading + 1 };
 
-        case labels.LOAD_MEMBERS_SUCCESS:
-            return { ...state, isLoading: state.isLoading - 1, data: action.payload.members, labels: action.payload.labels };
 
-        case labels.LOAD_MEMBERS_ERROR:
+        case labels.LOAD_DATA_SUCCESS:
+            return { ...state, isLoading: state.isLoading - 1, data: action.payload.data, labels: action.payload.labels };
+
+        case labels.LOAD_DATA_ERROR:
             return { ...state, isLoading: state.isLoading - 1 };
+
+
+        case labels.UPDATE_DATA_SUCCESS:
+            return { ...state, isLoading: state.isLoading - 1 };
+
+        case labels.UPDATE_DATA_ERROR:
+            return { ...state, isLoading: state.isLoading - 1 };
+
+
+        case labels.DELETE_DATA_SUCCESS:
+            return { ...state, isLoading: state.isLoading - 1 };
+
+        case labels.DELETE_DATA_ERROR:
+            return { ...state, isLoading: state.isLoading - 1 };
+
 
         default:
             return state

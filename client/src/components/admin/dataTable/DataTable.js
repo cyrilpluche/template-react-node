@@ -18,6 +18,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
+import UpdateDataDialog from './UpdateDataDialog'
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -43,14 +44,6 @@ function getSorting(order, orderBy) {
     return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
 
-const rows = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'Dessert (100g serving)' },
-    { id: 'calories', numeric: true, disablePadding: false, label: 'Calories' },
-    { id: 'fat', numeric: true, disablePadding: false, label: 'Fat (g)' },
-    { id: 'carbs', numeric: true, disablePadding: false, label: 'Carbs (g)' },
-    { id: 'protein', numeric: true, disablePadding: false, label: 'Protein (g)' },
-];
-
 class EnhancedTableHead extends React.Component {
     createSortHandler = property => event => {
         this.props.onRequestSort(event, property);
@@ -70,29 +63,34 @@ class EnhancedTableHead extends React.Component {
                         />
                     </TableCell>
                     {this.props.labels.map((row, index) => {
-                        return (
-                            <TableCell
-                                key={index}
-                                numeric={false}
-                                padding={'none'}
-                                sortDirection={orderBy === index ? order : false}
-                            >
-                                <Tooltip
-                                    title="Sort"
-                                    placement={'bottom-start'}
-                                    enterDelay={300}
+                        if (row !== '_id' && row !== '__v') {
+                            return (
+                                <TableCell
+                                    key={index}
+                                    numeric={false}
+                                    padding={'none'}
+                                    sortDirection={orderBy === index ? order : false}
                                 >
-                                    <TableSortLabel
-                                        active={orderBy === index}
-                                        direction={order}
-                                        onClick={this.createSortHandler(row)}
+                                    <Tooltip
+                                        title="Sort"
+                                        placement={'bottom-start'}
+                                        enterDelay={300}
                                     >
-                                        {row}
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                        );
+                                        <TableSortLabel
+                                            active={orderBy === index}
+                                            direction={order}
+                                            onClick={this.createSortHandler(row)}
+                                        >
+                                            {row}
+                                        </TableSortLabel>
+                                    </Tooltip>
+                                </TableCell>
+                            );
+                        }
                     }, this)}
+                    <TableCell padding="checkbox">
+                        Update
+                    </TableCell>
                 </TableRow>
             </TableHead>
         );
@@ -134,7 +132,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-    const { numSelected, classes } = props;
+    const { numSelected, classes, onDeleteSelectedData } = props;
 
     return (
         <Toolbar
@@ -149,7 +147,7 @@ let EnhancedTableToolbar = props => {
                     </Typography>
                 ) : (
                     <Typography variant="h6" id="tableTitle">
-                        Nutrition
+                        Data
                     </Typography>
                 )}
             </div>
@@ -158,7 +156,7 @@ let EnhancedTableToolbar = props => {
                 {numSelected > 0 ? (
                     <Tooltip title="Delete">
                         <IconButton aria-label="Delete">
-                            <DeleteIcon />
+                            <DeleteIcon onClick={onDeleteSelectedData}/>
                         </IconButton>
                     </Tooltip>
                 ) : (
@@ -176,6 +174,7 @@ let EnhancedTableToolbar = props => {
 EnhancedTableToolbar.propTypes = {
     classes: PropTypes.object.isRequired,
     numSelected: PropTypes.number.isRequired,
+    onDeleteSelectedData: PropTypes.func.isRequired,
 };
 
 EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
@@ -197,8 +196,10 @@ class EnhancedTable extends React.Component {
 
     constructor (props) {
         super(props)
-        console.log(this.props)
+
+        this.handleDeleteSelectedData = this.handleDeleteSelectedData.bind(this)
     }
+
     state = {
         order: 'asc',
         orderBy: '_id',
@@ -257,6 +258,11 @@ class EnhancedTable extends React.Component {
 
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
+    /** Custom methods */
+    handleDeleteSelectedData () {
+        this.props.deleteSelectedData('Member', this.state.selected)
+    }
+
     render() {
         const { classes } = this.props;
 
@@ -267,7 +273,7 @@ class EnhancedTable extends React.Component {
 
         return (
             <Paper className={classes.root}>
-                <EnhancedTableToolbar numSelected={selected.length} />
+                <EnhancedTableToolbar numSelected={selected.length} onDeleteSelectedData={this.handleDeleteSelectedData} />
                 <div className={classes.tableWrapper}>
                     <Table className={classes.table} aria-labelledby="tableTitle">
                         <EnhancedTableHead
@@ -282,24 +288,30 @@ class EnhancedTable extends React.Component {
                         <TableBody>
                             {stableSort(data, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map(n => {
+                                .map((n, index) => {
                                     const isSelected = this.isSelected(n._id);
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={event => this.handleClick(event, n._id)}
                                             role="checkbox"
                                             aria-checked={isSelected}
                                             tabIndex={-1}
                                             key={n._id}
                                             selected={isSelected}
                                         >
-                                            <TableCell padding="checkbox">
+                                            <TableCell padding="checkbox" onClick={event => this.handleClick(event, n._id)}>
                                                 <Checkbox checked={isSelected} />
                                             </TableCell>
                                             {Object.values(n).map((value, index) =>
-                                                <TableCell key={index}>{value}</TableCell>
+                                               Object.keys(n)[index] !== '_id' && Object.keys(n)[index] !== '__v' ? (
+                                                   <TableCell key={index}>{value}</TableCell>
+                                               ) : (
+                                                   null
+                                               )
                                             )}
+                                            <TableCell padding="checkbox">
+                                                <UpdateDataDialog element={n} updateElement={this.props.updateElement} table={this.props.table}/>
+                                            </TableCell>
                                         </TableRow>
                                     );
                                 })}

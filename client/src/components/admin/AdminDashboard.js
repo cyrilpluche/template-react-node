@@ -18,19 +18,25 @@ class AdminDashboard extends React.Component {
     constructor (props) {
         super(props)
         this.componentDidMount = this.componentDidMount.bind(this)
-        console.log(this.props.labels)
     }
 
     componentDidMount () {
-        const { onLoadMembers } = this.props
-        onLoadMembers()
+        const { onLoadData } = this.props
+        onLoadData('Member')
     }
 
     render() {
         const { classes } = this.props;
 
         return (
-            <DataBase data={this.props.data} isLoading={this.props.isLoading} labels={this.props.labels} />
+            <DataBase
+                data={this.props.data}
+                isLoading={this.props.isLoading}
+                labels={this.props.labels}
+                deleteSelectedData={this.props.onDeleteSelectedData}
+                updateElement={this.props.onUpdateElement}
+                table={'Member'}
+            />
         )
     }
 }
@@ -46,7 +52,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = {
-    onLoadMembers: _action.adminAction.loadMembers
+    onLoadData: _action.adminAction.loadData,
+    onDeleteSelectedData: _action.adminAction.deleteData,
+    onUpdateElement: _action.adminAction.updateElement
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(withStyles(globalStyle)(AdminDashboard));
