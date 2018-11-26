@@ -9,6 +9,6 @@ router.post('/create', member.create);
 
 router.put('/update', member.update);
 
-router.post('/delete', member.delete);
+router.post('/delete', member.delete, member.findAll);
 
 module.exports = router;

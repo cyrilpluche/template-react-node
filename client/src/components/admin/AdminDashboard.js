@@ -26,7 +26,7 @@ class AdminDashboard extends React.Component {
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, isLoading } = this.props;
 
         return (
             <DataBase

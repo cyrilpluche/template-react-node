@@ -22,14 +22,20 @@ export function Admin (state = initialState, action) {
 
 
         case labels.UPDATE_DATA_SUCCESS:
-            return { ...state, isLoading: state.isLoading - 1 };
+            let updatedData = Array.from(state.data)
+            updatedData[action.payload.index] = action.payload.element
+            return {
+                ...state,
+                isLoading: state.isLoading - 1,
+                data: updatedData
+            };
 
         case labels.UPDATE_DATA_ERROR:
             return { ...state, isLoading: state.isLoading - 1 };
 
 
         case labels.DELETE_DATA_SUCCESS:
-            return { ...state, isLoading: state.isLoading - 1 };
+            return { ...state, isLoading: state.isLoading - 1, data: action.payload.data };
 
         case labels.DELETE_DATA_ERROR:
             return { ...state, isLoading: state.isLoading - 1 };

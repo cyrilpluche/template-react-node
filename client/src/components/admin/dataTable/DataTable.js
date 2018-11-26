@@ -260,6 +260,7 @@ class EnhancedTable extends React.Component {
 
     /** Custom methods */
     handleDeleteSelectedData () {
+        this.setState({ selected: [] })
         this.props.deleteSelectedData('Member', this.state.selected)
     }
 
@@ -310,7 +311,7 @@ class EnhancedTable extends React.Component {
                                                )
                                             )}
                                             <TableCell padding="checkbox">
-                                                <UpdateDataDialog element={n} updateElement={this.props.updateElement} table={this.props.table}/>
+                                                <UpdateDataDialog element={n} index={index} updateElement={this.props.updateElement} table={this.props.table}/>
                                             </TableCell>
                                         </TableRow>
                                     );

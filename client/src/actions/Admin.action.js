@@ -29,10 +29,10 @@ function loadData (table) {
     }
 }
 
-function updateElement (table, element) {
+function updateElement (table, element, index) {
     return (dispatch) => {
         if (table === 'Member') {
-            updateMember(dispatch, element)
+            updateMember(dispatch, element, index)
         } else {
             console.log('No Table')
         }
@@ -67,13 +67,15 @@ function loadMember (dispatch) {
         })
 }
 
-function updateMember (dispatch, member) {
+function updateMember (dispatch, member, index) {
     dispatch(loadObject)
     _service.Member.update(member)
         .then(isUpdated => {
             dispatch({
                 type: labels.UPDATE_DATA_SUCCESS,
                 payload: {
+                    element: member,
+                    index: index,
                     isUpdated: isUpdated
                 }
             })
@@ -88,11 +90,11 @@ function deleteMember (dispatch, members) {
     dispatch(loadObject)
     let body = _helper.Request.convertToArrayObject(members, '_id')
     _service.Member.delete(body)
-        .then(isDeleted => {
+        .then(members => {
             dispatch({
                 type: labels.DELETE_DATA_SUCCESS,
                 payload: {
-                    isDeleted: isDeleted
+                    data: members
                 }
             })
         })

@@ -25,7 +25,7 @@ export default class FormDialog extends React.Component {
     };
 
     handleUpdate = () => {
-        this.props.updateElement(this.props.table, this.state.element)
+        this.props.updateElement(this.props.table, this.state.element, this.props.index)
         this.setState({ open: false });
     };
 
