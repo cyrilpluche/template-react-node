@@ -5,6 +5,8 @@ const labels = {
     LOAD: 'Admin : load',
     LOAD_DATA_SUCCESS: 'Admin : load data success',
     LOAD_DATA_ERROR: 'Admin : load data error',
+    CREATE_DATA_SUCCESS: 'Admin : create data success',
+    CREATE_DATA_ERROR: 'Admin : create data error',
     UPDATE_DATA_SUCCESS: 'Admin : update data success',
     UPDATE_DATA_ERROR: 'Admin : update data error',
     DELETE_DATA_SUCCESS: 'Admin : delete data success',
@@ -19,10 +21,22 @@ function errorObject (type) {
     return { type: type }
 }
 
+/** =========== Global methods =========== */
+
 function loadData (table) {
     return (dispatch) => {
         if (table === 'Member') {
             loadMember(dispatch)
+        } else {
+            console.log('No Table')
+        }
+    }
+}
+
+function createElement (table, element, index) {
+    return (dispatch) => {
+        if (table === 'Member') {
+            createMember(dispatch, element)
         } else {
             console.log('No Table')
         }
@@ -49,6 +63,8 @@ function deleteData (table, data) {
     }
 }
 
+/** =========== Member methods =========== */
+
 function loadMember (dispatch) {
     dispatch(loadObject)
     _service.Member.findAll()
@@ -57,13 +73,31 @@ function loadMember (dispatch) {
                 type: labels.LOAD_DATA_SUCCESS,
                 payload: {
                     data: members,
-                    labels: Object.keys(members[0])
+                    labels: Object.keys(_service.Member.model),
+                    element: _service.Member.model
                 }
             })
         })
         .catch(error => {
             console.log(error)
             dispatch(errorObject(labels.LOAD_DATA_ERROR))
+        })
+}
+
+function createMember (dispatch, member) {
+    dispatch(loadObject)
+    _service.Member.create(member)
+        .then(createdMember => {
+            dispatch({
+                type: labels.CREATE_DATA_SUCCESS,
+                payload: {
+                    element: createdMember,
+                }
+            })
+        })
+        .catch(error => {
+            console.log(error)
+            dispatch(errorObject(labels.CREATE_DATA_ERROR))
         })
 }
 
@@ -107,6 +141,7 @@ function deleteMember (dispatch, members) {
 export const adminAction = {
     labels,
     loadData,
+    createElement,
     deleteData,
     updateElement
 }

@@ -6,10 +6,13 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import SettingsIcon from '@material-ui/icons/Settings';
+import AddBoxIcon from '@material-ui/icons/AddBox'
+import { style } from '../Style'
 
-export default class FormDialog extends React.Component {
+export default class DataDialog extends React.Component {
     constructor (props) {
         super(props)
+        this.handleSubmit = this.handleSubmit.bind(this)
         this.state = {
             open: false,
             element: this.props.element
@@ -24,8 +27,8 @@ export default class FormDialog extends React.Component {
         this.setState({ open: false });
     };
 
-    handleUpdate = () => {
-        this.props.updateElement(this.props.table, this.state.element, this.props.index)
+    handleSubmit = () => {
+        this.props.submit(this.props.table, this.state.element, this.props.index)
         this.setState({ open: false });
     };
 
@@ -40,15 +43,22 @@ export default class FormDialog extends React.Component {
     render() {
         return (
             <div>
-                <Button onClick={this.handleClickOpen}>
-                    <SettingsIcon/>
-                </Button>
+                {this.props.icon === 'create' ? (
+                    <Button variant="contained" color='primary'  style={ style.button } onClick={this.handleClickOpen}>
+                        Create <AddBoxIcon style={ style.rightIcon }/>
+                    </Button>
+                ) : (
+                    <Button onClick={this.handleClickOpen}>
+                        <SettingsIcon/>
+                    </Button>
+
+                )}
                 <Dialog
                     open={this.state.open}
                     onClose={this.handleClose}
                     aria-labelledby="form-dialog-title"
                 >
-                    <DialogTitle id="form-dialog-title">Update</DialogTitle>
+                    <DialogTitle id="form-dialog-title">{this.props.title}</DialogTitle>
                     <DialogContent>
                         {Object.values(this.state.element).map((value, index) =>
                             Object.keys(this.state.element)[index] !== '_id' && Object.keys(this.state.element)[index] !== '__v' ? (
@@ -72,8 +82,8 @@ export default class FormDialog extends React.Component {
                         <Button onClick={this.handleClose} color="secondary">
                             Cancel
                         </Button>
-                        <Button onClick={this.handleUpdate} color="primary">
-                            Update
+                        <Button onClick={this.handleSubmit} color="primary">
+                            Submit
                         </Button>
                     </DialogActions>
                 </Dialog>

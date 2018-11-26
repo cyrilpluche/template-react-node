@@ -18,7 +18,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
-import UpdateDataDialog from './UpdateDataDialog'
+import DataDialog from './DataDialog'
+import Grid from "@material-ui/core/Grid/Grid";
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -58,7 +59,7 @@ class EnhancedTableHead extends React.Component {
                     <TableCell padding="checkbox">
                         <Checkbox
                             indeterminate={numSelected > 0 && numSelected < rowCount}
-                            checked={numSelected === rowCount}
+                            checked={numSelected === rowCount && rowCount > 0}
                             onChange={onSelectAllClick}
                         />
                     </TableCell>
@@ -86,6 +87,8 @@ class EnhancedTableHead extends React.Component {
                                     </Tooltip>
                                 </TableCell>
                             );
+                        } else {
+                            return null
                         }
                     }, this)}
                     <TableCell padding="checkbox">
@@ -287,6 +290,13 @@ class EnhancedTable extends React.Component {
                             rowCount={data.length}
                         />
                         <TableBody>
+                            {data.length === 0 ? (
+                                <TableRow>
+                                    <TableCell>No values</TableCell>
+                                </TableRow>
+                            ) : (
+                                null
+                            )}
                             {stableSort(data, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((n, index) => {
@@ -311,7 +321,13 @@ class EnhancedTable extends React.Component {
                                                )
                                             )}
                                             <TableCell padding="checkbox">
-                                                <UpdateDataDialog element={n} index={index} updateElement={this.props.updateElement} table={this.props.table}/>
+                                                <DataDialog
+                                                    title={'Update ' + this.props.table}
+                                                    element={n}
+                                                    index={index}
+                                                    submit={this.props.updateElement}
+                                                    table={this.props.table}
+                                                />
                                             </TableCell>
                                         </TableRow>
                                     );

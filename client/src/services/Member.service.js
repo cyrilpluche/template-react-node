@@ -4,8 +4,14 @@ import _helper from '../helpers'
 const url = 'member/'
 
 const Member = {
-    create(body){
-        return Api.post(url + 'create', body).then(res => res.data)
+    model:  {
+        member_firstname: '',
+        member_lastname: '',
+        member_age: ''
+    },
+
+    create (member) {
+        return Api.post(url + 'create', member).then(res => res.data)
     },
 
     findAll () {

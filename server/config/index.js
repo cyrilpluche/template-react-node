@@ -11,7 +11,7 @@ module.exports = {
         });
 
         mongoose.connection.on('error', function(err){
-            console.log(error('\x1b[31m%s\x1b[0m', "\nMongoose default connection has occured "+err+" error"), '\n', '\x1b[0m');
+            console.log('\x1b[31m%s\x1b[0m', "\nMongoose default connection has occured "+err+" error", '\n', '\x1b[0m');
         });
 
         mongoose.connection.on('disconnected', () => {

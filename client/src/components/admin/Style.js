@@ -1,7 +1,10 @@
 export const style = {
-    main: {
-        backgroundColor: 'green'
-    }
+    button: {
+        margin: 2,
+    },
+    rightIcon: {
+        marginLeft: 5,
+    },
 };
 
 

@@ -6,11 +6,12 @@ import { withStyles } from '@material-ui/core/styles';
 
 /** COMPONENTS */
 import _action from '../../actions'
-import _business from './Business'
+//import _business from './Business'
 import DataBase from './dataTable/DataTable'
+import DataDialog from './dataTable/DataDialog'
 
 /** STYLES */
-import { style } from './Style'
+//import { style } from './Style'
 import { globalStyle } from '../../style'
 
 class AdminDashboard extends React.Component {
@@ -21,22 +22,30 @@ class AdminDashboard extends React.Component {
     }
 
     componentDidMount () {
-        const { onLoadData } = this.props
-        onLoadData('Member')
+        const { onLoadData, table } = this.props
+        onLoadData(table)
     }
 
     render() {
-        const { classes, isLoading } = this.props;
-
         return (
-            <DataBase
-                data={this.props.data}
-                isLoading={this.props.isLoading}
-                labels={this.props.labels}
-                deleteSelectedData={this.props.onDeleteSelectedData}
-                updateElement={this.props.onUpdateElement}
-                table={'Member'}
-            />
+            <div>
+                <DataDialog
+                    title={'Create ' + this.props.table}
+                    element={this.props.element}
+                    index={-1}
+                    submit={this.props.onCreateElement}
+                    table={this.props.table}
+                    icon='create'
+                />
+                <DataBase
+                    labels={this.props.labels}
+                    data={this.props.data}
+                    isLoading={this.props.isLoading}
+                    deleteSelectedData={this.props.onDeleteSelectedData}
+                    updateElement={this.props.onUpdateElement}
+                    table={this.props.table}
+                />
+            </div>
         )
     }
 }
@@ -47,14 +56,17 @@ AdminDashboard.propTypes = {
 
 const mapStateToProps = (state) => ({
     isLoading: state.Admin.isLoading,
+    labels: state.Admin.labels,
     data: state.Admin.data,
-    labels: state.Admin.labels
+    element: state.Admin.element,
+    table: state.Admin.table
 })
 
 const mapDispatchToProps = {
     onLoadData: _action.adminAction.loadData,
     onDeleteSelectedData: _action.adminAction.deleteData,
-    onUpdateElement: _action.adminAction.updateElement
+    onUpdateElement: _action.adminAction.updateElement,
+    onCreateElement: _action.adminAction.createElement
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(withStyles(globalStyle)(AdminDashboard));

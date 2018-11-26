@@ -1,4 +1,4 @@
-const Member = require('./Member');
+const Member = require('./member');
 const EndPoint = require('./endpoint');
 
 module.exports = {
